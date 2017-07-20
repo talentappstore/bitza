@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content=""></meta>
+    <meta name="author" content=""></meta>
+    <link rel="icon" href="../../favicon.ico" th:href="@{../../favicon.ico}"></link>
+
+    <title>Bitza</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<style>
+textarea {
+  width: 800px;
+  height: 400px;
+}
+</style>
+		
+  </head>
+
+
+  <body>
+
+<h1>Welcome, tenant <b><span th:text='${tenant}'>&lt;tenant&gt;</span></b></h1>
+
+<p>You can use this app to help you build an onboarding app.
+</p>
+
+<p>Your onboarding app should produce the <b>POST /applications/views/at/onboard/now/byID/{application}/pushes</b> endpoint.  
+</p>
+
+<p>When a new hire occurs, the ATS (Applicant Tracking System) calls this endpoint, passing your app details about the new hire (name, email, etc.).
+</p>
+
+<p>If you're reading this, you've probably managed to install this app successfully. You should now:
+<ol>
+<li>Install your own app (which produces the API)
+<li>Click <button id="pingButton" value="val_1" name="but1">ping</button> to simulate the ATS telling all onboarding apps (including yours) about a new hire.
+<li>Look at the log below of this app's activity on the server as it calls the onboarding API on all onboarding apps
+<li>If your app is working, you should see it's shortcode in the results
+<li>You should also have received an incoming API call on your endpoint,
+with <a th:href="@{${bodyUrl}}">this sort of information</a> about the new hire.
+</ol>
+</p>
+
+<p>Notes:
+<ul>
+<li>For test purposes, this app acts both as an ATS (i.e. consuming the onboarding API on onboarding apps to tell them about new hires)
+and an onboarding app (i.e. producing the API itself). This means you'll see two apps in the results - this app and your app.   
+<li>The actual data you receive in the API call is controlled by the customer's setup. Usually, this will at least include the candidate's
+name and email, and details about the job they were hired into.
+</ul>
+</p>
+
+<textarea id="results">
+</textarea>
+
+
+<script th:inline="javascript">
+$("#pingButton").click(function(e) {
+	
+	document.getElementById('results').value = "pinging...";
+	var tenant = /*[[${tenant}]]*/ "tenant";
+	
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/tenants/" + tenant + "/ping",
+//        data: { 
+//            id: $(this).val(), // < note use of 'this' here
+//            access_token: $("#access_token").val() 
+//        },
+        success: function(result) {
+        	document.getElementById('results').value = result;
+            // alert('ok');
+        },
+        error: function(result) {
+            alert('error');
+        }
+    });
+});
+
+</script>
+
+
+</body>
+	
+</html>
