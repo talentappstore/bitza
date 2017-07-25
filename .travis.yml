@@ -1,0 +1,20 @@
+sudo: required
+
+services:
+  - docker
+
+language: java
+jdk:
+  - openjdk8
+
+script:
+  - ./mvnw clean install
+  - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+  - docker build -t talentappstore/bitza:latest .
+  - docker build -t talentappstore/bitza:${TRAVIS_BUILD_NUMBER} .
+  - docker push talentappstore/bitza:latest
+  - docker push talentappstore/bitza:${TRAVIS_BUILD_NUMBER}
+
+branches:
+  only:
+    - master
