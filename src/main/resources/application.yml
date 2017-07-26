@@ -1,0 +1,18 @@
+server:
+  port: 8084
+  use-forward-headers: true
+
+spring:
+  application:
+    name: blitza
+
+management:
+  port: 8081
+  security:
+    enabled: false
+---
+spring:
+  profiles: production
+
+server:
+  port: 8080
